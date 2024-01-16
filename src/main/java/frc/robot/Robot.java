@@ -17,42 +17,17 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {}
-
-  @Override
-  public void disabledPeriodic() {}
-
-  @Override
-  public void disabledExit() {}
-
-  @Override
   public void autonomousInit() {
     m_robotContainer.runSysID();
   }
 
   @Override
-  public void autonomousPeriodic() {}
-
-  @Override
-  public void autonomousExit() {}
-
-  @Override
-  public void teleopInit() {}
-
-  @Override
-  public void teleopPeriodic() {}
-
-  @Override
-  public void teleopExit() {}
-
-  @Override
-  public void testInit() {
-    CommandScheduler.getInstance().cancelAll();
+  public void teleopInit() {
+    // Lock in
   }
 
   @Override
-  public void testPeriodic() {}
-
-  @Override
-  public void testExit() {}
+  public void teleopPeriodic() {
+    // Lock in
+  }
 }
