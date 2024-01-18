@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj2.command.Command;
+
 public class RobotContainer {
   testSubsystem testSub;
 
@@ -19,7 +21,7 @@ public class RobotContainer {
     testSub.setVelocity(vel);
   }
 
-  public void runSysID() {
-    testSub.runSysIDTest();
+  public Command getSysIDTests() {
+    return testSub.getSysIDTests();
   }
 }

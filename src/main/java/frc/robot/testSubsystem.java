@@ -18,6 +18,7 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -74,7 +75,7 @@ public class testSubsystem implements Subsystem{
             pid.setReference(
                 velocityInRPM,
                 ControlType.kVelocity,
-                0, 
+                0,
                 kS * Math.signum(velocityInRPM) + kV * velocityInRPM);
     }
 
@@ -89,30 +90,40 @@ public class testSubsystem implements Subsystem{
     }
 
     // Used in autonomousInit() in Robot.java
-    public void runSysIDTest() {
-        if(isTalon) SignalLogger.start();
-        else if(!isTalon) {
-            DataLogManager.start();
-            DataLogManager.logNetworkTables(true);
-            URCL.start();
-        }
+    public Command getSysIDTests() {
+        Command startLogging = 
+            Commands.runOnce(()-> {
+                if(isTalon) SignalLogger.start();
+                else if(!isTalon) {
+                    DataLogManager.start();
+                    DataLogManager.logNetworkTables(true);
+                    URCL.start();
+                }
+            }, this );
 
-        SysIdRoutine sysIdRoutine = new SysIdRoutine(
-            new SysIdRoutine.Config(),
-            new SysIdRoutine.Mechanism(
-            (voltage) -> this.setVoltageWithUnits(voltage),
-        null, // No log consumer, since data is recorded by URCL
-            this ) );
+        SysIdRoutine sysIdRoutine = 
+            new SysIdRoutine(
+                new SysIdRoutine.Config(),
+                new SysIdRoutine.Mechanism(
+                (voltage) -> this.setVoltageWithUnits(voltage),
+            null, // No log consumer, since data is recorded by URCL
+                this ) );
 
         // The methods below return Command objects
-        new SequentialCommandGroup(
-            sysIdRoutine.quasistatic(SysIdRoutine.Direction.kForward), Commands.waitSeconds(1),
-            sysIdRoutine.quasistatic(SysIdRoutine.Direction.kReverse), Commands.waitSeconds(1),
-            sysIdRoutine.dynamic(SysIdRoutine.Direction.kForward), Commands.waitSeconds(1),
-            sysIdRoutine.dynamic(SysIdRoutine.Direction.kReverse), Commands.waitSeconds(1) );
+        Command stopLogging = 
+            Commands.runOnce(()-> { 
+                if(isTalon) SignalLogger.stop(); 
+                else if(!isTalon) DataLogManager.stop(); 
+            }, this);
 
-        if(isTalon) SignalLogger.stop();
-        else if(!isTalon) DataLogManager.stop();
+        return 
+            new SequentialCommandGroup(
+                startLogging,
+                sysIdRoutine.quasistatic(SysIdRoutine.Direction.kForward), Commands.waitSeconds(1),
+                sysIdRoutine.quasistatic(SysIdRoutine.Direction.kReverse), Commands.waitSeconds(1),
+                sysIdRoutine.dynamic(SysIdRoutine.Direction.kForward),     Commands.waitSeconds(1),
+                sysIdRoutine.dynamic(SysIdRoutine.Direction.kReverse),     Commands.waitSeconds(1),
+                stopLogging );
         // For rev logs extract using wpilib's data log tool: https://docs.wpilib.org/en/stable/docs/software/telemetry/datalog-download.html
         // For talon logs extract using phoenix tuner x: https://pro.docs.ctr-electronics.com/en/latest/docs/tuner/tools/log-extractor.html
     }
