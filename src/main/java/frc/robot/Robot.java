@@ -8,7 +8,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    m_robotContainer = new RobotContainer(false);
+    m_robotContainer = new RobotContainer(true);
   }
 
   @Override
@@ -23,11 +23,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // Lock in
+    // m_robotContainer.runVoltage(2);
   }
 
   @Override
   public void teleopPeriodic() {
-    // Lock in
+    m_robotContainer.runVoltage(3);
   }
 }

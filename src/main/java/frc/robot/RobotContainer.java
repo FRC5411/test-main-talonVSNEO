@@ -7,7 +7,7 @@ public class RobotContainer {
 
   public RobotContainer(boolean isTalon) {
     // Change boolean to test falcon vs NEO
-    testSub = new testSubsystem(false);
+    testSub = new testSubsystem(isTalon);
     configureBindings();
   }
 
