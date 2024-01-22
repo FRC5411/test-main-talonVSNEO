@@ -77,7 +77,7 @@ public class testSubsystem implements Subsystem{
 
     public void setVelocity(double velocityInRPM) {
         SmartDashboard.setDefaultNumber("VelocitySetpoint", velocityInRPM);
-        if (isTalon) talon.setControl(m_velocity.withVelocity(velocityInRPM));
+        if (isTalon) talon.setControl(m_velocity.withVelocity(velocityInRPM / 60.0));
         else if(!isTalon) 
             pid.setReference(
                 velocityInRPM,
@@ -108,7 +108,7 @@ public class testSubsystem implements Subsystem{
                 ),
                 new SysIdRoutine.Mechanism(
                 (voltage) -> this.setVoltageWithUnits(voltage),
-            null, // No log consumer, since data is recorded by URCL
+            null, // No log consumer, since external logger
                 this ) );
 
         return 

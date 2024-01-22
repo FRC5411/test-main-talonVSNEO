@@ -22,12 +22,8 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopInit() {
-    // m_robotContainer.runVoltage(2);
-  }
+  public void teleopInit() {}
 
   @Override
-  public void teleopPeriodic() {
-    m_robotContainer.runVoltage(3);
-  }
+  public void teleopPeriodic() {}
 }

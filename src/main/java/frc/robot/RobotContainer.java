@@ -3,7 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class RobotContainer {
-  testSubsystem testSub;
+  private testSubsystem testSub;
 
   public RobotContainer(boolean isTalon) {
     // Change boolean to test falcon vs NEO
